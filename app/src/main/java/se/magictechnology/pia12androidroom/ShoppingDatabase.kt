@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Entity
@@ -18,7 +19,7 @@ data class Shopitem(
     @PrimaryKey(autoGenerate = true) val uid: Int,
     @ColumnInfo(name = "title") val title: String?,
     @ColumnInfo(name = "amount") val amount: Int?,
-    @ColumnInfo(name = "bought") val bought: Int?
+    @ColumnInfo(name = "bought") var bought: Int?
 )
 
 @Dao
@@ -35,11 +36,17 @@ interface ShopDao {
     @Query("SELECT * FROM shopitem WHERE bought = 0")
     fun getNotBought(): List<Shopitem>
 
+    @Query("SELECT * FROM shopitem WHERE bought = 1")
+    fun getBought(): List<Shopitem>
+
     @Query("SELECT * FROM shopitem WHERE title = :shopname LIMIT 1")
     fun getByName(shopname : String): Shopitem
 
     @Insert
     suspend fun insertAll(vararg shop: Shopitem)
+
+    @Update
+    suspend fun updateShop(vararg shop: Shopitem)
 
     @Delete
     fun delete(shop: Shopitem)
